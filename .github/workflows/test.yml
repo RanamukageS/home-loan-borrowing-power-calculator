@@ -1,0 +1,101 @@
+name: Automated Tests
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run tests
+        run: npm test
+        continue-on-error: true
+
+      - name: Generate HTML report
+        if: always()
+        run: npm run report
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ matrix.node-version }}
+          path: reports/
+          retention-days: 30
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report-${{ matrix.node-version }}
+          path: reports/html-report/
+          retention-days: 30
+
+      - name: Publish Test Results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: reports/cucumber-report.xml
+          check_name: Test Results - Node ${{ matrix.node-version }}
+
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'reports/cucumber-report.json';
+
+            if (fs.existsSync(reportPath)) {
+              const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+              let passed = 0;
+              let failed = 0;
+
+              report.forEach(feature => {
+                feature.elements.forEach(scenario => {
+                  const scenarioFailed = scenario.steps.some(step => step.result.status === 'failed');
+                  if (scenarioFailed) {
+                    failed++;
+                  } else {
+                    passed++;
+                  }
+                });
+              });
+
+              const body = `## Test Results 🧪\n\n` +
+                          `- ✅ Passed: ${passed}\n` +
+                          `- ❌ Failed: ${failed}\n` +
+                          `- 📊 Total: ${passed + failed}\n\n` +
+                          `View detailed reports in the workflow artifacts.`;
+
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            }
