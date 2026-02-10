@@ -28,6 +28,5 @@ screenshots/
 videos/
 traces/
 
-# Environment variables
-.env
+# Environment variables (local overrides only)
 .env.local

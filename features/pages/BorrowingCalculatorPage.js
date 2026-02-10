@@ -1,10 +1,10 @@
 const { expect } = require('@playwright/test');
+const config = require('../../config');
 
 class BorrowingCalculatorPage {
   constructor(page) {
     this.page = page;
-    this.url =
-      'https://www.anz.com.au/personal/home-loans/calculators-tools/borrowing-power-calculator/';
+    this.url = config.baseUrl;
 
     // ===== Application type =====
     this.singleApplicationRadio = page.locator('#application_type_single');

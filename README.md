@@ -25,6 +25,7 @@ This project contains automated tests for a borrowing power calculator. The test
 - **Playwright** - Browser automation library
 - **Chrome** - Target browser
 - **Node.js** - Runtime environment
+- **dotenv** - Environment configuration management
 
 ## Prerequisites
 
@@ -77,6 +78,8 @@ AutomationTest/
 │   ├── cucumber-report.html           # Basic HTML report
 │   └── html-report/                   # Enhanced HTML report
 │       └── index.html
+├── .env                               # Environment configuration (BASE_URL)
+├── config.js                          # Configuration loader
 ├── cucumber.js                        # Cucumber configuration
 ├── playwright.config.js               # Playwright configuration
 ├── generate-report.js                 # HTML report generator script
@@ -103,6 +106,30 @@ Modify [playwright.config.js](playwright.config.js) and change `headless: false`
 ```bash
 npx cucumber-js features/borrowing-calculator.feature
 ```
+
+## Environment Configuration
+
+The test suite uses environment variables for configuration, managed through [.env](.env) file.
+
+### Configuration Variables
+
+- **BASE_URL** - The URL of the borrowing calculator application
+
+### Customizing the URL
+
+Edit [.env](.env) to change the target URL:
+
+```bash
+BASE_URL=https://your-custom-url.com/calculator
+```
+
+Or override temporarily via command line:
+
+```bash
+BASE_URL=https://staging.example.com npm test
+```
+
+The configuration is loaded via [config.js](config.js) and used in the Page Object Model.
 
 ## Generating Reports
 

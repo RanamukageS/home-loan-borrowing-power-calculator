@@ -13,6 +13,8 @@ This is a complete BDD test automation framework for a borrowing calculator appl
 
 ### Configuration Files
 - **[package.json](package.json)** - Node.js project configuration with dependencies
+- **[.env](.env)** - Environment configuration (BASE_URL and other settings)
+- **[config.js](config.js)** - Configuration loader for environment variables
 - **[cucumber.js](cucumber.js)** - Cucumber test runner configuration
 - **[playwright.config.js](playwright.config.js)** - Playwright browser configuration
 - **[generate-report.js](generate-report.js)** - HTML report generator script
@@ -90,6 +92,8 @@ Verifies that clicking "Start over" button properly clears all form fields.
 
 ✅ **BDD Approach** - Tests written in plain English (Gherkin)
 ✅ **Page Object Model** - Clean separation of concerns
+✅ **Environment Configuration** - Easy URL management via .env file
+✅ **Smart Waiting** - Condition-based waits instead of fixed timeouts
 ✅ **Multiple Report Formats** - JSON, XML, and HTML
 ✅ **CI/CD Ready** - Command-line execution and GitHub Actions workflow
 ✅ **Screenshot on Failure** - Automatic screenshot capture when tests fail
@@ -156,6 +160,7 @@ Verifies that clicking "Start over" button properly clears all form fields.
 - `@playwright/test` - Playwright test assertions
 - `cucumber-html-reporter` - Basic HTML reporter
 - `multiple-cucumber-html-reporter` - Enhanced HTML reporter
+- `dotenv` - Environment variable management
 
 ## Requirements Met
 
