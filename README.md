@@ -42,8 +42,8 @@ git --version
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd AutomationTest
+   git clone https://github.com/RanamukageS/home-loan-borrowing-power-calculator.git
+   cd home-loan-borrowing-power-calculator
    ```
 
 2. **Install dependencies**
