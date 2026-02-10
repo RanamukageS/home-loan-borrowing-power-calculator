@@ -1,32 +1,68 @@
+const { expect } = require('@playwright/test');
+
 class BorrowingCalculatorPage {
   constructor(page) {
     this.page = page;
-    this.url = 'https://www.anz.com.au/personal/home-loans/calculators-tools/borrowing-power-calculator/';
+    this.url =
+      'https://www.anz.com.au/personal/home-loans/calculators-tools/borrowing-power-calculator/';
+
+    // ===== Application type =====
+    this.singleApplicationRadio = page.locator('#application_type_single');
+    this.jointApplicationRadio = page.locator('#application_type_joint');
+
+    // ===== Property type =====
+    this.ownerOccupiedRadio = page.locator('#borrow_type_home');
+    this.investmentRadio = page.locator('#borrow_type_investment');
+
+    // ===== Dependants =====
+    this.dependantsSelect = page.locator('select[name="dependants"]');
+
+    // ===== Form fields (using aria-labelledby for semantic selection) =====
+    this.incomeInput = page.getByRole('textbox', { name: /Your annual income \(before tax\)/i });
+    this.otherIncomeInput = page.getByRole('textbox', { name: /Your annual other income/i });
+    this.livingExpensesInput = page.getByRole('textbox', { name: /Monthly living expenses/i });
+    this.currentHomeLoanInput = page.getByRole('textbox', { name: /Current home loan monthly repayments/i });
+    this.otherLoanInput = page.getByRole('textbox', { name: /Other loan monthly repayments/i });
+    this.otherCommitmentsInput = page.getByRole('textbox', { name: /Other monthly commitments/i });
+    this.creditCardLimitInput = page.getByRole('textbox', { name: /Total credit card limits/i });
+
+    // ===== Actions =====
+    this.calculateButton = page.getByRole('button', {
+      name: 'Work out how much I could borrow',
+    });
+    this.startOverButton = page.getByRole('button', { name: 'Start over' });
+
+    // ===== Result =====
+    this.resultContainer = page.locator('body');
   }
+
+  // ---------- Navigation ----------
 
   async navigate() {
-    await this.page.goto(this.url, { waitUntil: 'load', timeout: 60000 });
-    await this.page.waitForLoadState('domcontentloaded');
-    await this.page.waitForTimeout(3000);
+    await this.page.goto(this.url, { waitUntil: 'domcontentloaded' });
   }
+
+  // ---------- Selections ----------
 
   async selectApplicationType(type) {
-    await this.page.waitForTimeout(1000);
-
-    if (type.toLowerCase().includes('single')) {
-      await this.page.click('#application_type_single');
-    } else if (type.toLowerCase().includes('joint')) {
-      await this.page.click('#application_type_joint');
+    if (/single/i.test(type)) {
+      await this.singleApplicationRadio.check();
+    } else if (/joint/i.test(type)) {
+      await this.jointApplicationRadio.check();
     }
-
-    await this.page.waitForTimeout(500);
   }
 
-  async enterDependants(count) {
-    await this.page.waitForTimeout(500);
+  async selectPropertyType(type) {
+    if (/live in|owner/i.test(type)) {
+      await this.ownerOccupiedRadio.check();
+    } else if (/investment/i.test(type)) {
+      await this.investmentRadio.check();
+    }
+  }
 
+  async selectDependants(count) {
     await this.page.evaluate((desiredValue) => {
-      const select = document.querySelector('select');
+      const select = document.querySelector('select[name="dependants"]');
       if (!select) return;
 
       const currentValue = select.value;
@@ -43,214 +79,75 @@ class BorrowingCalculatorPage {
         select.dispatchEvent(new Event('input', { bubbles: true }));
       }
     }, count);
-
-    await this.page.waitForTimeout(500);
   }
 
-  async selectPropertyType(type) {
-    await this.page.waitForTimeout(500);
 
-    if (type.toLowerCase().includes('live in')) {
-      await this.page.click('#borrow_type_home');
-    } else if (type.toLowerCase().includes('investment')) {
-      await this.page.click('#borrow_type_investment');
-    }
 
-    await this.page.waitForTimeout(500);
+
+  async enterDependants(count) {
+    await this.selectDependants(count);
+  }
+
+  // ---------- Data entry ----------
+
+  async fillCurrencyField(locator, amount) {
+    const cleanAmount = amount.toString().replace(/[$,]/g, '');
+    await locator.fill(cleanAmount);
   }
 
   async enterIncome(amount) {
-    const cleanAmount = amount.replace(/[$,]/g, '');
-    await this.page.waitForTimeout(500);
-
-    // Get all visible text inputs and skip the search input
-    const inputs = await this.page.locator('input[type="text"]:visible').all();
-    let fieldIndex = 0;
-
-    for (let i = 0; i < inputs.length; i++) {
-      const id = await inputs[i].getAttribute('id');
-      const name = await inputs[i].getAttribute('name');
-
-      // Skip search input
-      if (id === 'searchinput' || name === 'qu') {
-        continue;
-      }
-
-      fieldIndex++;
-      if (fieldIndex === 1) {
-        await inputs[i].fill(cleanAmount);
-        break;
-      }
-    }
-
-    await this.page.waitForTimeout(500);
+    await this.fillCurrencyField(this.incomeInput, amount);
   }
 
   async enterOtherIncome(amount) {
-    const cleanAmount = amount.replace(/[$,]/g, '');
-    await this.page.waitForTimeout(500);
-
-    const inputs = await this.page.locator('input[type="text"]:visible').all();
-    let fieldIndex = 0;
-
-    for (let i = 0; i < inputs.length; i++) {
-      const id = await inputs[i].getAttribute('id');
-      const name = await inputs[i].getAttribute('name');
-
-      if (id === 'searchinput' || name === 'qu') {
-        continue;
-      }
-
-      fieldIndex++;
-      if (fieldIndex === 2) {
-        await inputs[i].fill(cleanAmount);
-        break;
-      }
-    }
-
-    await this.page.waitForTimeout(500);
+    await this.fillCurrencyField(this.otherIncomeInput, amount);
   }
 
   async enterLivingExpenses(amount) {
-    const cleanAmount = amount.replace(/[$,]/g, '');
-    await this.page.waitForTimeout(500);
-
-    const inputs = await this.page.locator('input[type="text"]:visible').all();
-    let fieldIndex = 0;
-
-    for (let i = 0; i < inputs.length; i++) {
-      const id = await inputs[i].getAttribute('id');
-      const name = await inputs[i].getAttribute('name');
-
-      if (id === 'searchinput' || name === 'qu') {
-        continue;
-      }
-
-      fieldIndex++;
-      if (fieldIndex === 3) {
-        await inputs[i].fill(cleanAmount);
-        break;
-      }
-    }
-
-    await this.page.waitForTimeout(500);
+    await this.fillCurrencyField(this.livingExpensesInput, amount);
   }
 
   async enterCurrentHomeLoan(amount) {
-    const cleanAmount = amount.replace(/[$,]/g, '');
-    await this.page.waitForTimeout(500);
-
-    const inputs = await this.page.locator('input[type="text"]:visible').all();
-    let fieldIndex = 0;
-
-    for (let i = 0; i < inputs.length; i++) {
-      const id = await inputs[i].getAttribute('id');
-      const name = await inputs[i].getAttribute('name');
-
-      if (id === 'searchinput' || name === 'qu') {
-        continue;
-      }
-
-      fieldIndex++;
-      if (fieldIndex === 4) {
-        await inputs[i].fill(cleanAmount);
-        break;
-      }
-    }
-
-    await this.page.waitForTimeout(500);
+    await this.fillCurrencyField(this.currentHomeLoanInput, amount);
   }
 
   async enterOtherLoan(amount) {
-    const cleanAmount = amount.replace(/[$,]/g, '');
-    await this.page.waitForTimeout(500);
-
-    const inputs = await this.page.locator('input[type="text"]:visible').all();
-    let fieldIndex = 0;
-
-    for (let i = 0; i < inputs.length; i++) {
-      const id = await inputs[i].getAttribute('id');
-      const name = await inputs[i].getAttribute('name');
-
-      if (id === 'searchinput' || name === 'qu') {
-        continue;
-      }
-
-      fieldIndex++;
-      if (fieldIndex === 5) {
-        await inputs[i].fill(cleanAmount);
-        break;
-      }
-    }
-
-    await this.page.waitForTimeout(500);
+    await this.fillCurrencyField(this.otherLoanInput, amount);
   }
 
   async enterOtherCommitments(amount) {
-    const cleanAmount = amount.replace(/[$,]/g, '');
-    await this.page.waitForTimeout(500);
-
-    const inputs = await this.page.locator('input[type="text"]:visible').all();
-    let fieldIndex = 0;
-
-    for (let i = 0; i < inputs.length; i++) {
-      const id = await inputs[i].getAttribute('id');
-      const name = await inputs[i].getAttribute('name');
-
-      if (id === 'searchinput' || name === 'qu') {
-        continue;
-      }
-
-      fieldIndex++;
-      if (fieldIndex === 6) {
-        await inputs[i].fill(cleanAmount);
-        break;
-      }
-    }
-
-    await this.page.waitForTimeout(500);
+    await this.fillCurrencyField(this.otherCommitmentsInput, amount);
   }
 
   async enterCreditCardLimit(amount) {
-    const cleanAmount = amount.replace(/[$,]/g, '');
-    await this.page.waitForTimeout(500);
+    await this.fillCurrencyField(this.creditCardLimitInput, amount);
+  }
 
-    const inputs = await this.page.locator('input[type="text"]:visible').all();
-    let fieldIndex = 0;
+  // ---------- Actions ----------
 
-    for (let i = 0; i < inputs.length; i++) {
-      const id = await inputs[i].getAttribute('id');
-      const name = await inputs[i].getAttribute('name');
-
-      if (id === 'searchinput' || name === 'qu') {
-        continue;
-      }
-
-      fieldIndex++;
-      if (fieldIndex === 7) {
-        await inputs[i].fill(cleanAmount);
-        break;
-      }
-    }
-
-    await this.page.waitForTimeout(500);
+  async calculate() {
+    await expect(this.calculateButton).toBeEnabled();
+    await this.calculateButton.click();
+    await this.page.waitForLoadState('networkidle');
   }
 
   async clickCalculate() {
-    await this.page.click('button:has-text("Work out how much I could borrow")');
-    await this.page.waitForTimeout(5000);
+    await this.calculate();
+  }
+
+  async startOver() {
+    await this.startOverButton.click();
+    await expect(this.incomeInput).toHaveValue('0');
   }
 
   async clickStartOver() {
-    await this.page.click('button:has-text("Start over")');
-    await this.page.waitForTimeout(2000);
+    await this.startOver();
   }
 
-  async getBorrowingEstimate() {
-    await this.page.waitForTimeout(2000);
+  // ---------- Assertions / Getters ----------
 
-    // Try to find the result text
-    const bodyText = await this.page.locator('body').textContent();
+  async getBorrowingEstimate() {
+    const bodyText = await this.resultContainer.textContent();
 
     // Look for dollar amounts in the format $XXX,XXX
     const matches = bodyText.match(/\$([0-9]{1,3}(,[0-9]{3})*)/g);
@@ -270,24 +167,22 @@ class BorrowingCalculatorPage {
   }
 
   async isFormCleared() {
-    await this.page.waitForTimeout(1000);
+    const fields = [
+      this.incomeInput,
+      this.otherIncomeInput,
+      this.livingExpensesInput,
+      this.currentHomeLoanInput,
+      this.otherLoanInput,
+      this.otherCommitmentsInput,
+      this.creditCardLimitInput,
+    ];
 
-    const inputs = await this.page.locator('input[type="text"]:visible').all();
-
-    for (let i = 0; i < inputs.length; i++) {
-      const id = await inputs[i].getAttribute('id');
-      const name = await inputs[i].getAttribute('name');
-
-      if (id === 'searchinput' || name === 'qu') {
-        continue;
-      }
-
-      const value = await inputs[i].inputValue();
+    for (const field of fields) {
+      const value = await field.inputValue();
       if (value !== '' && value !== '0') {
         return false;
       }
     }
-
     return true;
   }
 }
