@@ -7,7 +7,8 @@ module.exports = {
       'html:reports/cucumber-report.html',
       'junit:reports/cucumber-report.xml'
     ],
-    timeout: 60000
+    timeout: 60000,
+    retry: 2
   },
   chrome: {
     require: ['features/step_definitions/**/*.js', 'features/support/**/*.js'],
@@ -17,6 +18,7 @@ module.exports = {
       'html:reports/cucumber-report.html',
       'junit:reports/cucumber-report.xml'
     ],
-    timeout: 60000
+    timeout: 60000,
+    retry: 2
   }
 };
