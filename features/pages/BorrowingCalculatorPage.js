@@ -18,13 +18,13 @@ class BorrowingCalculatorPage {
     this.dependantsSelect = page.locator('select[name="dependants"]');
 
     // ===== Form fields (using aria-labelledby for semantic selection) =====
-    this.incomeInput = page.getByRole('textbox', { name: /Your annual income \(before tax\)/i });
-    this.otherIncomeInput = page.getByRole('textbox', { name: /Your annual other income/i });
-    this.livingExpensesInput = page.getByRole('textbox', { name: /Monthly living expenses/i });
-    this.currentHomeLoanInput = page.getByRole('textbox', { name: /Current home loan monthly repayments/i });
-    this.otherLoanInput = page.getByRole('textbox', { name: /Other loan monthly repayments/i });
-    this.otherCommitmentsInput = page.getByRole('textbox', { name: /Other monthly commitments/i });
-    this.creditCardLimitInput = page.getByRole('textbox', { name: /Total credit card limits/i });
+    this.incomeInput = page.getByRole('textbox', { name: 'Your annual income (before tax)' });
+    this.otherIncomeInput = page.getByRole('textbox', { name: 'Your annual other income' });
+    this.livingExpensesInput = page.getByRole('textbox', { name: 'Monthly living expenses' });
+    this.currentHomeLoanInput = page.getByRole('textbox', { name: 'Current home loan monthly repayments' });
+    this.otherLoanInput = page.getByRole('textbox', { name: 'Other loan monthly repayments' });
+    this.otherCommitmentsInput = page.getByRole('textbox', { name: 'Other monthly commitments' });
+    this.creditCardLimitInput = page.getByRole('textbox', { name: 'Total credit card limits' });
 
     // ===== Actions =====
     this.calculateButton = page.getByRole('button', {
