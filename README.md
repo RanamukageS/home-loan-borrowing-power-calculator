@@ -63,13 +63,14 @@ git --version
 npm test
 ```
 
-### Run tests with Chrome profile
-```bash
-npm run test:chrome
+### Run with visible browser (headed mode)
+Set `headless: false` in [features/support/hooks.js](features/support/hooks.js):
+```js
+browser = await chromium.launch({
+  headless: false,
+  args: ['--start-maximized']
+});
 ```
-
-### Run with visible browser (non-headless mode)
-Modify [playwright.config.js](playwright.config.js) and change `headless: false`
 
 ### Run specific feature
 ```bash
