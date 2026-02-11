@@ -21,8 +21,15 @@ Feature: Borrowing Calculator
     Then I should see the borrowing estimate of "$530,000"
 
   Scenario: Clear form using start over button
-    When I select "Single" as application type
-    And I enter "2" dependants
-    And I enter "$80,000" as income
+    When I select "Joint" as application type
+    And I enter "3" dependants
+    And I select "Residential investment" as property type
+    And I enter "$100,000" as income
+    And I enter "$10,000" as other income
+    And I enter "$2,000" as living expenses
+    And I enter "$500" as current home loan repayments
+    And I enter "$100" as other loan repayments
+    And I enter "$200" as other commitments
+    And I enter "$10,000" as total credit card limit
     And I click the start over button
     Then all form fields should be cleared

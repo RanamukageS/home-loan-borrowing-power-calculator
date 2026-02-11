@@ -119,6 +119,15 @@ class BorrowingCalculatorPage {
   }
 
   async isFormCleared() {
+    // Check radio buttons reset to defaults
+    if (!await this.singleApplicationRadio.isChecked()) return false;
+    if (!await this.ownerOccupiedRadio.isChecked()) return false;
+
+    // Check dependants reset to 0
+    const dependants = await this.dependantsSelect.inputValue();
+    if (dependants !== '0') return false;
+
+    // Check all currency fields reset to 0
     const fields = [
       this.incomeInput,
       this.otherIncomeInput,
