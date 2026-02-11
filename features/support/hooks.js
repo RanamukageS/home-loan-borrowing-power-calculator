@@ -16,8 +16,8 @@ BeforeAll(async function () {
 
 Before(async function () {
   context = await browser.newContext({
-    viewport: { width: 1920, height: 1080 },
-    recordVideo: { dir: 'reports/videos/', size: { width: 1920, height: 1080 } }
+    viewport: null,
+    recordVideo: { dir: 'reports/videos/' }
   });
   this.page = await context.newPage();
 });

@@ -104,7 +104,6 @@ class BorrowingCalculatorPage {
   async clickCalculate() {
     await expect(this.calculateButton).toBeEnabled();
     await this.calculateButton.click();
-    await this.page.waitForLoadState('networkidle');
   }
 
   async clickStartOver() {
