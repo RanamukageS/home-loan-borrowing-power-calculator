@@ -33,7 +33,7 @@ class BorrowingCalculatorPage {
     this.startOverButton = page.getByRole('button', { name: 'Start over' });
 
     // ===== Result =====
-    this.resultContainer = page.locator('body');
+    this.borrowResultAmount = page.locator('#borrowResultTextAmount');
   }
 
   // ---------- Navigation ----------
@@ -132,23 +132,7 @@ class BorrowingCalculatorPage {
   // ---------- Assertions / Getters ----------
 
   async getBorrowingEstimate() {
-    const bodyText = await this.resultContainer.textContent();
-
-    // Look for dollar amounts in the format $XXX,XXX
-    const matches = bodyText.match(/\$([0-9]{1,3}(,[0-9]{3})*)/g);
-
-    if (matches && matches.length > 0) {
-      // Return the largest amount found (likely the borrowing estimate)
-      const amounts = matches.map(m => {
-        const num = parseInt(m.replace(/[$,]/g, ''));
-        return { text: m, value: num };
-      });
-
-      amounts.sort((a, b) => b.value - a.value);
-      return amounts[0].text;
-    }
-
-    return '';
+    return await this.borrowResultAmount.textContent();
   }
 
   async isFormCleared() {
