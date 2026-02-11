@@ -106,3 +106,7 @@ start reports/html-report/index.html
 
 Or simply navigate to the file in your file explorer and open it with your preferred browser.
 
+### Report Interface
+<img width="1437" height="794" alt="Screenshot 2026-02-11 at 13 48 14" src="https://github.com/user-attachments/assets/317668c4-9029-4cd4-9312-6db600264c44" />
+
+
