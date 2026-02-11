@@ -59,16 +59,10 @@ When('I click the start over button', async function () {
 
 Then('I should see the borrowing estimate of {string}', async function (expectedAmount) {
   const actualEstimate = await calculatorPage.getBorrowingEstimate();
-
-  // Clean both values for comparison
-  const cleanExpected = expectedAmount.replace(/[$,\s]/g, '');
-  const cleanActual = actualEstimate.replace(/[$,\s]/g, '');
-
-  expect(cleanActual).toContain(cleanExpected);
+  expect(actualEstimate).toContain(expectedAmount);
 });
 
 Then('all form fields should be cleared', async function () {
-  // Wait a moment for the form to fully reset
   await this.page.waitForTimeout(1000);
 
   const isCleared = await calculatorPage.isFormCleared();

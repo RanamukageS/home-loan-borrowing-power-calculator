@@ -2,7 +2,6 @@ const { Before, After, BeforeAll, AfterAll, Status, setDefaultTimeout } = requir
 const { chromium } = require('playwright');
 const fs = require('fs');
 
-// Set default timeout for all steps to 60 seconds
 setDefaultTimeout(60000);
 
 let browser;

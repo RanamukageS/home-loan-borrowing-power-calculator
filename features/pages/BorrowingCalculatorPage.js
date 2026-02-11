@@ -17,7 +17,7 @@ class BorrowingCalculatorPage {
     // ===== Dependants =====
     this.dependantsSelect = page.getByRole('combobox', { name: 'Number of dependants' });
 
-    // ===== Form fields (using aria-labelledby for semantic selection) =====
+    // ===== Form fields  =====
     this.incomeInput = page.getByRole('textbox', { name: 'Your annual income (before tax)' });
     this.otherIncomeInput = page.getByRole('textbox', { name: 'Your annual other income' });
     this.livingExpensesInput = page.getByRole('textbox', { name: 'Monthly living expenses' });
