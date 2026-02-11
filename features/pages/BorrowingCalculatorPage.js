@@ -45,22 +45,22 @@ class BorrowingCalculatorPage {
   // ---------- Selections ----------
 
   async selectApplicationType(type) {
-    if (/single/i.test(type)) {
+    if (type === "Single") {
       await this.singleApplicationRadio.check();
-    } else if (/joint/i.test(type)) {
+    } else if (type === "Joint") {
       await this.jointApplicationRadio.check();
     }
   }
 
   async selectPropertyType(type) {
-    if (/live in|owner/i.test(type)) {
+    if (type === "Home to live in") {
       await this.ownerOccupiedRadio.check();
-    } else if (/investment/i.test(type)) {
+    } else if (type === "Residential investment") {
       await this.investmentRadio.check();
     }
   }
 
-  async selectDependants(count) {
+  async enterDependants(count) {
     await this.page.evaluate((desiredValue) => {
       const select = document.querySelector('select[name="dependants"]');
       if (!select) return;
@@ -79,13 +79,6 @@ class BorrowingCalculatorPage {
         select.dispatchEvent(new Event('input', { bubbles: true }));
       }
     }, count);
-  }
-
-
-
-
-  async enterDependants(count) {
-    await this.selectDependants(count);
   }
 
   // ---------- Data entry ----------
@@ -125,23 +118,15 @@ class BorrowingCalculatorPage {
 
   // ---------- Actions ----------
 
-  async calculate() {
+  async clickCalculate() {
     await expect(this.calculateButton).toBeEnabled();
     await this.calculateButton.click();
     await this.page.waitForLoadState('networkidle');
   }
 
-  async clickCalculate() {
-    await this.calculate();
-  }
-
-  async startOver() {
+  async clickStartOver() {
     await this.startOverButton.click();
     await expect(this.incomeInput).toHaveValue('0');
-  }
-
-  async clickStartOver() {
-    await this.startOver();
   }
 
   // ---------- Assertions / Getters ----------
