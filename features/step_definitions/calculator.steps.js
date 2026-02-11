@@ -58,7 +58,7 @@ When('I click the start over button', async function () {
 });
 
 Then('I should see the borrowing estimate of {string}', async function (expectedAmount) {
-  await expect(calculatorPage.borrowResultAmount).toContainText(expectedAmount, { timeout: 10000 });
+  await expect(calculatorPage.borrowResultAmount).toContainText(expectedAmount, { timeout: 2000 });
 });
 
 Then('all form fields should be cleared', async function () {
