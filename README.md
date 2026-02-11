@@ -72,11 +72,6 @@ browser = await chromium.launch({
 });
 ```
 
-### Run specific feature
-```bash
-npx cucumber-js features/borrowing-calculator.feature
-```
-
 ## Generating Reports
 
 Reports are automatically generated when tests run. The test execution produces three types of reports:
