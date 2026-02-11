@@ -61,8 +61,7 @@ class BorrowingCalculatorPage {
   }
 
   async enterDependants(count) {
-    const label = parseInt(count) >= 5 ? '5+' : count;
-    await this.dependantsSelect.selectOption({ label });
+    await this.dependantsSelect.selectOption({ label: count });
   }
 
   // ---------- Data entry ----------
