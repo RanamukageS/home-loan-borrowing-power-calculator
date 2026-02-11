@@ -15,7 +15,7 @@ class BorrowingCalculatorPage {
     this.investmentRadio = page.locator('#borrow_type_investment');
 
     // ===== Dependants =====
-    this.dependantsSelect = page.locator('select[name="dependants"]');
+    this.dependantsSelect = page.getByRole('combobox', { name: 'Number of dependants' });
 
     // ===== Form fields (using aria-labelledby for semantic selection) =====
     this.incomeInput = page.getByRole('textbox', { name: 'Your annual income (before tax)' });
@@ -61,24 +61,8 @@ class BorrowingCalculatorPage {
   }
 
   async enterDependants(count) {
-    await this.page.evaluate((desiredValue) => {
-      const select = document.querySelector('select[name="dependants"]');
-      if (!select) return;
-
-      const currentValue = select.value;
-      const options = Array.from(select.options).map(o => o.value);
-
-      // Determine target value (exact match or with '+' suffix)
-      const targetValue = options.includes(desiredValue) ? desiredValue :
-                         options.includes(desiredValue + '+') ? desiredValue + '+' : null;
-
-      // Only change if current value is different from target
-      if (targetValue && currentValue !== targetValue) {
-        select.value = targetValue;
-        select.dispatchEvent(new Event('change', { bubbles: true }));
-        select.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-    }, count);
+    const label = parseInt(count) >= 5 ? '5+' : count;
+    await this.dependantsSelect.selectOption({ label });
   }
 
   // ---------- Data entry ----------
